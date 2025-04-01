@@ -46,16 +46,28 @@ static void Task1()
 
 static void Task2()
 {
-    var input = Console.ReadLine();
-    var isNegative = input[0] == '-';
-    input = input.TrimStart('-');
+    const int ExpectedBits = 7;
+    string input;
+    bool isNeg;
 
-    var binary = new BinaryNumber(input, maxBits: 7);
+    while (true)
+    {
+        Console.Write("Binary number: ");
+        input = Console.ReadLine();
+        isNeg = input[0] == '-';
+        input = input.TrimStart('-');
 
-    if (isNegative)
+        if (input.Length == ExpectedBits) break;
+
+        Console.WriteLine($"Error! Expected exactly {ExpectedBits} bits");
+    }
+
+    var binary = new BinaryNumber(input, maxBits: ExpectedBits);
+
+    if (isNeg)
     {
         // Reverse bits.
-        for (int i = 0; i < 7; ++i)
+        for (int i = 0; i < ExpectedBits; ++i)
         {
             binary[i] = !binary[i];
         }
@@ -63,9 +75,9 @@ static void Task2()
         binary += new BinaryNumber(number: 1);
     }
 
-    var s = binary.ToString().PadLeft(7, '0');
+    var s = binary.ToString().PadLeft(ExpectedBits, '0');
 
-    Console.WriteLine($"{(isNegative ? 1 : 0)}|{s}");
+    Console.WriteLine($"{(isNeg ? 1 : 0)}|{s}");
 }
 
 static string DecToBin(double x, int precision)
@@ -81,6 +93,7 @@ static string DecToBin(double x, int precision)
             "value must be in range 1..");
 
     StringBuilder buf = new(precision);
+    buf.Append("0.");
 
     for (int i = 0; i < precision; ++i)
     {
