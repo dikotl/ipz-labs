@@ -1,21 +1,44 @@
-﻿// var a = new Float8(sign: 1, exponent: 3, mantissa: 0);   // -1.0
-// var b = new Float16(sign: 0, exponent: 15, mantissa: 0); // +1.0
+﻿using System.Globalization;
+
+// var a = new Float8(sign: 1, mantissa: 0, exponent: 3);   // -1.0
+// var b = new Float16(sign: 0, mantissa: 0, exponent: 15); // +1.0
 // result ~= 0.000030517578
 
-var a = new Float8(sign: 0, exponent: 3, mantissa: 8);     // +1.5
-var b = new Float16(sign: 0, exponent: 16, mantissa: 256); // +2.25
+// var a = new Float8(sign: 0, mantissa: 8, exponent: 3);     // +1.5
+// var b = new Float16(sign: 0, mantissa: 256, exponent: 16); // +2.25
 
-// var a = new Float8(sign: 0, exponent: 2, mantissa: 0);     // +0.5
-// var b = new Float16(sign: 0, exponent: 16, mantissa: 512); // +3.5
+// var a = new Float8(sign: 0, mantissa: 0, exponent: 2);     // +0.5
+// var b = new Float16(sign: 0, mantissa: 512, exponent: 16); // +3.5
 
-// var a = new Float8(sign: 1, exponent: 3, mantissa: 8);     // -1.5
-// var b = new Float16(sign: 1, exponent: 16, mantissa: 512); // -3.0
+// var a = new Float8(sign: 1, mantissa: 8, exponent: 3);     // -1.5
+// var b = new Float16(sign: 1, mantissa: 512, exponent: 16); // -3.0
 
-// var a = new Float8(sign: 0, exponent: 1, mantissa: 0);   // -0.25
-// var b = new Float16(sign: 0, exponent: 13, mantissa: 0); // -0.25
+// var a = new Float8(sign: 0, mantissa: 0, exponent: 1);   // -0.25
+// var b = new Float16(sign: 0, mantissa: 0, exponent: 13); // -0.25
 
-// var a = new Float8(sign: 0, exponent: 7, mantissa: 15);    // +15.875
-// var b = new Float16(sign: 0, exponent: 12, mantissa: 128); // +0.125
+// var a = new Float8(sign: 0, mantissa: 15, exponent: 7);    // +15.875
+// var b = new Float16(sign: 0, mantissa: 128, exponent: 12); // +0.125
+
+int[] aInputs, bInputs;
+
+while (true)
+{
+    Console.Write("Input sign, mantissa & exponent (all as integers), separated by a space for first number: ");
+    aInputs = Console.ReadLine()!.Split().Select(int.Parse).ToArray();
+    if (aInputs.Length == 3) break;
+    Console.WriteLine("Invalid numbers count");
+}
+
+while (true)
+{
+    Console.Write("Input sign, mantissa & exponent (all as integers), separated by a space for second number: ");
+    bInputs = Console.ReadLine()!.Split().Select(int.Parse).ToArray();
+    if (bInputs.Length == 3) break;
+    Console.WriteLine("Invalid numbers count");
+}
+
+var a = new Float8(sign: aInputs[0], mantissa: aInputs[1], exponent: aInputs[2]);
+var b = new Float16(sign: bInputs[0], mantissa: bInputs[1], exponent: bInputs[2]);
 
 var result = Add(a, b);
 
@@ -127,8 +150,8 @@ struct Float8(int sign, int exponent, int mantissa)
     public int Exponent => (Bits & 0b111_0000) >> 4;
     public int Mantissa => Bits & 0b1111;
 
-    private const int Bias = 3;
-    private const int MantissaBits = 4;
+    public const int Bias = 3;
+    public const int MantissaBits = 4;
 
     public int UnbiasedExponent => Exponent - Bias;
     public int FullMantissa => (1 << MantissaBits) | Mantissa;
@@ -153,8 +176,8 @@ struct Float16(int sign, int exponent, int mantissa)
     public int Exponent => (Bits & 0b111_1110_0000_0000) >> 10;
     public int Mantissa => Bits & 0b11_1111_1111;
 
-    private const int Bias = 15;
-    private const int MantissaBits = 10;
+    public const int Bias = 15;
+    public const int MantissaBits = 10;
 
     public int UnbiasedExponent => Exponent - Bias;
     public int FullMantissa => (1 << MantissaBits) | Mantissa;
